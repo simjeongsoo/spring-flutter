@@ -79,7 +79,7 @@ class _LoginState extends State<Login> {
                             "Email",
                             style: GoogleFonts.roboto(
                               // fontWeight: FontWeight.bold,
-                              fontSize: 40,
+                              fontSize: 30,
                               color: Color.fromRGBO(255, 255, 255, 0.8),
                             ),
                           ),
@@ -115,7 +115,7 @@ class _LoginState extends State<Login> {
                             "Password",
                             style: GoogleFonts.roboto(
                               // fontWeight: FontWeight.bold,
-                              fontSize: 40,
+                              fontSize: 30,
                               color: Color.fromRGBO(255, 255, 255, 0.8),
                             ),
                           ),

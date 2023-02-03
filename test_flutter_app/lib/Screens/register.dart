@@ -72,7 +72,7 @@ class _RegisterState extends State<Register> {
                             "Email",
                             style: GoogleFonts.roboto(
                               // fontWeight: FontWeight.bold,
-                              fontSize: 40,
+                              fontSize: 30,
                               color: Color.fromRGBO(255, 255, 255, 0.8),
                             ),
                           ),
@@ -108,7 +108,7 @@ class _RegisterState extends State<Register> {
                             "Password",
                             style: GoogleFonts.roboto(
                               // fontWeight: FontWeight.bold,
-                              fontSize: 40,
+                              fontSize: 30,
                               color: Color.fromRGBO(255, 255, 255, 0.8),
                             ),
                           ),
