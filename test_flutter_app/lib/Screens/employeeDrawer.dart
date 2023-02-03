@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_flutter_app/Screens/getEmployee.dart';
+import 'package:test_flutter_app/Screens/login.dart';
 import 'package:test_flutter_app/Screens/registerEmployee.dart';
 
 class employeeDrawer extends StatefulWidget{
@@ -19,7 +20,7 @@ class employeeDrawerState extends State<employeeDrawer> {
       appBar: AppBar(
         title: Text('Employee Management'),
       ),
-      body: Center(child: Text('Welcome to First Flutter App')),
+      body: Center(child: Text('google map api')),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.only(top: minimumPadding,bottom: minimumPadding),
@@ -44,6 +45,18 @@ class employeeDrawerState extends State<employeeDrawer> {
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => getEmployee()));
               },
+            ),
+            Container(
+              alignment: Alignment.bottomCenter,
+              height:400,
+              width:100,
+              padding: EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                child: Text('Logout'),
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                },
+              ),
             )
           ],
         ),
