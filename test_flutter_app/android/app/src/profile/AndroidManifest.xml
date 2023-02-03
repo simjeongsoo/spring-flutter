@@ -5,4 +5,18 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- 위치 정보 엑세스 권한 요청 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <application
+            android:label="google_maps_flutter"
+            android:icon="@mipmap/ic_launcher">
+
+        <!-- android API Key -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+                   android:value="api-key"/>
+    </application>
+
 </manifest>
