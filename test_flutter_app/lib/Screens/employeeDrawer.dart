@@ -66,6 +66,7 @@ class employeeDrawerState extends State<employeeDrawer> {
   }
   // marker end
 
+  // 검색한 장소로 지도를 이동하기 위한 컨트롤러
   TextEditingController _searchController = TextEditingController();
 
 
