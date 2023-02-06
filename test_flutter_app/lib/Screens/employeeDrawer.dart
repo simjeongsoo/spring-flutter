@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:test_flutter_app/Screens/getEmployee.dart';
@@ -47,6 +48,7 @@ class employeeDrawerState extends State<employeeDrawer> {
     zoom: 14.4746,
   );
 
+
   // 지도 클릭 시 표시할 장소에 대한 마커 목록
   final List<Marker> markers = [];
 
@@ -61,6 +63,7 @@ class employeeDrawerState extends State<employeeDrawer> {
       ));
     });
   }
+  // marker end
 
   @override
   Widget build(BuildContext context) {
@@ -72,24 +75,43 @@ class employeeDrawerState extends State<employeeDrawer> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        child: GoogleMap(
-          mapType: MapType.normal,
-          initialCameraPosition: _initialPosition,
-          // 초기 카메라 위치
-          onMapCreated: (controller) {
-            setState(() {
-              _mapController = controller; // 애플리케이션에서 지도를 이동하기 위한 컨트롤러
-            });
-          },
-          // onMapCreated: (GoogleMapController controller){
-          //   _controller.complete(controller);
-          // },
-          markers: markers.toSet(),
-          onTap: (cordinate) {
-            _mapController.animateCamera(CameraUpdate.newLatLng(cordinate));
-            addMarker(cordinate);
-          },
-        ),
+        child: Column(
+          children: [
+            Container(
+              // padding: EdgeInsets.all(40.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'search...',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 16, top: 16),
+                  suffixIcon: Icon(Icons.search_rounded),
+                ),
+              ),
+            ),
+            Expanded(
+                child: GoogleMap(
+                  myLocationButtonEnabled: true,
+                  myLocationEnabled: true,
+                  mapType: MapType.normal,
+                  initialCameraPosition: _initialPosition,
+                  // 초기 카메라 위치
+                  onMapCreated: (controller) {
+                    setState(() {
+                      _mapController = controller; // 애플리케이션에서 지도를 이동하기 위한 컨트롤러
+                    });
+                  },
+                  // onMapCreated: (GoogleMapController controller){
+                  //   _controller.complete(controller);
+                  // },
+                  markers: markers.toSet(),
+                  onTap: (cordinate) {
+                    _mapController.animateCamera(CameraUpdate.newLatLng(cordinate));
+                    addMarker(cordinate);
+                  },
+                ),
+            ),
+          ],
+        )
       ),
       floatingActionButton: Container(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 30),
@@ -97,12 +119,14 @@ class employeeDrawerState extends State<employeeDrawer> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             FloatingActionButton(
+              heroTag: 'zoomIn',
               onPressed: () {
                 _mapController.animateCamera(CameraUpdate.zoomIn());
               },
               child: Icon(Icons. zoom_in),
             ),
             FloatingActionButton(
+              heroTag: 'zoomOut',
               onPressed: () {
                 _mapController.animateCamera(CameraUpdate.zoomOut());
               },
