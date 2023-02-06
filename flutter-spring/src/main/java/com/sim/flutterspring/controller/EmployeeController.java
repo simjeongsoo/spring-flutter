@@ -3,6 +3,8 @@ package com.sim.flutterspring.controller;
 import com.sim.flutterspring.entity.EmployeeEntity;
 import com.sim.flutterspring.model.Employee;
 import com.sim.flutterspring.service.EmployeeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +13,8 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*")
 public class EmployeeController {
+
+    Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     @Autowired
     EmployeeService employeeService;
