@@ -9,7 +9,8 @@ import 'package:flutter/rendering.dart';
 import 'package:test_flutter_app/Screens/getEmployee.dart';
 import 'package:test_flutter_app/Screens/login.dart';
 import 'package:test_flutter_app/Screens/registerEmployee.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart'; // google map
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:test_flutter_app/Service/location_service.dart'; // google map
 
 class employeeDrawer extends StatefulWidget{
   @override
@@ -22,7 +23,7 @@ class employeeDrawerState extends State<employeeDrawer> {
 
   final minimumPadding = 5.0;
 
-  Completer<GoogleMapController> _controller = Completer();
+  // Completer<GoogleMapController> _controller = Completer();
 
   // 초기 카메라 위치
   // static final CameraPosition _KGooglePlex = CameraPosition(
@@ -65,6 +66,9 @@ class employeeDrawerState extends State<employeeDrawer> {
   }
   // marker end
 
+  TextEditingController _searchController = TextEditingController();
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,16 +81,26 @@ class employeeDrawerState extends State<employeeDrawer> {
         width: double.infinity,
         child: Column(
           children: [
-            Container(
-              // padding: EdgeInsets.all(40.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'search...',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.only(left: 16, top: 16),
-                  suffixIcon: Icon(Icons.search_rounded),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _searchController,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: InputDecoration(hintText: 'Search by City'),
+                    onChanged: (value){
+                      print(value);
+                    },
+                  )
                 ),
-              ),
+                IconButton(
+                    onPressed: () async {
+                      var place = await LocationService().getPlace(_searchController.text);
+                      _goToSearchPlace(place);
+                    },
+                    icon: Icon(Icons.search)
+                ),
+              ],
             ),
             Expanded(
                 child: GoogleMap(
@@ -106,6 +120,7 @@ class employeeDrawerState extends State<employeeDrawer> {
                   markers: markers.toSet(),
                   onTap: (cordinate) {
                     _mapController.animateCamera(CameraUpdate.newLatLng(cordinate));
+
                     addMarker(cordinate);
                   },
                 ),
@@ -187,9 +202,19 @@ class employeeDrawerState extends State<employeeDrawer> {
     );
   }
 
-  // Future<void> _goToTheTarget() async {
-  //   final GoogleMapController controller = await _controller.future;
-  //   controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  // }
+  // 검색한 장소로 위치 이동
+  Future<void> _goToSearchPlace(Map<String, dynamic> place) async {
+    final double lat = place['geometry']['location']['lat'];
+    final double lng = place['geometry']['location']['lng'];
+
+    // final GoogleMapController controller = await _controller.future;
+    final GoogleMapController controller = await _mapController;
+
+    _mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat,lng), zoom: 12),
+      ),
+    );
+  }
 
 }
