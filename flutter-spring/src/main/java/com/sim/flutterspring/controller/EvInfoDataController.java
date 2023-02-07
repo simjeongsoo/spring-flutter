@@ -30,7 +30,9 @@ public class EvInfoDataController {
     @Value("${api.key}")
     String key;
 
-    private final int allChStationNum = 36217;
+    int totalCount = 36352;
+    int numOfRows = 100;
+    int totalPages = totalCount / numOfRows + (totalCount % numOfRows == 0 ? 0 : 1);
 
     private final EvInfoDataService evInfoDataService;
 
@@ -46,35 +48,54 @@ public class EvInfoDataController {
     public Mono<EvInfoDataDto> getChargerInfo(@PathVariable String page) {
         //--using WebFlux's WebClient--//
 
-        String apiurl = "http://apis.data.go.kr/B552584/EvCharger/getChargerInfo" +
-                "?" + "serviceKey=" + key +
-                "&" + "numOfRows=" + "10" +
-                "&" + "pageNo=" + page +
-                "&" + "zcode=" + 11 +
-                "&" + "dataType=" + "JSON";
+//        String apiurl = "http://apis.data.go.kr/B552584/EvCharger/getChargerInfo" +
+//                "?" + "serviceKey=" + key +
+//                "&" + "numOfRows=" + "10" +
+//                "&" + "pageNo=" + page +
+//                "&" + "zcode=" + 11 +
+//                "&" + "dataType=" + "JSON";
+
+        String apiurl = "http://apis.data.go.kr/B552584/EvCharger/getChargerInfo";
 
         // WebClient build
         WebClient wc = WebClient.builder()
                 .baseUrl(apiurl)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .codecs(clientCodecConfigurer -> clientCodecConfigurer.defaultCodecs().maxInMemorySize(-1)) // to unlimited memory size
                 .build();
 
-        // WebClient 를 이용한 get request
-        Mono<EvInfoDataDto> result = wc.get()
-                .uri(apiurl)
+
+
+        /*for (int pageNo = 1; pageNo <= totalPages; pageNo++) {
+            // WebClient 를 이용한 get request
+            Mono<EvInfoDataDto> result = wc.get()
+                    .uri("?serviceKey={serviceKey}&numOfRows={numOfRows}&pageNo={pageNo}&zcode={zcode}&dataType={dataType}",
+                            key, pageSize, pageNo, "11", "JSON")
+                    .retrieve()  // get body
+                    .bodyToMono(EvInfoDataDto.class); // JSON 데이터 역직렬화 하여 dto 매핑
+
+
+            // response data 처리로직
+            // Use the EvChargerInfoDto
+            // dto -> service 전달
+            result.subscribe(evInfoDataService::saveEvInfoData);
+
+        }
+*/
+
+        // data 100개 제한
+        Mono<EvInfoDataDto> result2 = wc.get()
+                .uri("?serviceKey={serviceKey}&numOfRows={numOfRows}&pageNo={pageNo}&zcode={zcode}&dataType={dataType}",
+                        key, numOfRows, page, "11", "JSON")
                 .retrieve()  // get body
                 .bodyToMono(EvInfoDataDto.class); // JSON 데이터 역직렬화 하여 dto 매핑
 
         // response data 처리로직
-        result.subscribe(evChargerInfoDto -> {
-            // Use the EvChargerInfoDto
-            logger.info("getStatNm : {}", evChargerInfoDto.items.item.get(0).getStatNm());
+        // Use the EvChargerInfoDto
+        // dto -> service 전달
+        result2.subscribe(evInfoDataService::saveEvInfoData);
 
-            // dto -> service 전달
-            evInfoDataService.saveEvInfoData(evChargerInfoDto);
-        });
-
-        return result;
+        return result2;
     }
 
     /**
