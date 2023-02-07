@@ -78,7 +78,6 @@ public class EvInfoDataController {
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
 
             String returnLine;
-//            result.append("<xmp>");
             while ((returnLine = br.readLine()) != null) {
                 result.append(returnLine).append("\n");
             }
@@ -98,6 +97,39 @@ public class EvInfoDataController {
             object = (JSONObject) itemArr.get(i);
             logger.info("{} . 충전소 이름 : {}", i + 1, object.get("statNm"));
             logger.info("{} . 충전기 상태 : {}", i + 1, object.get("stat"));
+        }
+
+        return String.valueOf(result);
+    }
+
+    /**
+     * Ev 충전소 상태 조회 api
+     * */
+    @GetMapping("/getChargerStatus/{page}")
+    public String getChargerStatus(@PathVariable String page) {
+        StringBuffer result = new StringBuffer();
+
+        try {
+            String apiurl = "http://apis.data.go.kr/B552584/EvCharger/getChargerStatus" +
+                    "?" + "serviceKey=" + key +
+                    "&" + "numOfRows=" + "10" +
+                    "&" + "pageNo=" + page +
+                    "&" + "zcode=" + 11 +           // 서울
+                    "&" + "dataType=" + "JSON";
+
+            URL url = new URL(apiurl);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), StandardCharsets.UTF_8));
+
+            String returnLine;
+            while ((returnLine = br.readLine()) != null) {
+                result.append(returnLine).append("\n");
+            }
+            urlConnection.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return String.valueOf(result);
