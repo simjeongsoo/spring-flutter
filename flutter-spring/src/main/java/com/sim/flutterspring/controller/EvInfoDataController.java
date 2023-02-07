@@ -12,11 +12,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 @RestController
 @RequestMapping("/api")
@@ -37,6 +43,24 @@ public class EvInfoDataController {
         StringBuffer result = new StringBuffer();
 
         try {
+            //--java SSL 인증서 유효성 검사 우회--//
+            TrustManager trm = new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
+                @Override
+                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+//                    return new X509Certificate[0];
+                    return null;
+                }
+            };
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, new TrustManager[]{trm}, null);
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(((hostname, session) -> true));
+            //--java SSL 인증서 유효성 검사 우회--//
+
             String apiurl = "http://apis.data.go.kr/B552584/EvCharger/getChargerInfo" +
                     "?" + "serviceKey=" + key +
                     "&" + "numOfRows=" + "10" +
