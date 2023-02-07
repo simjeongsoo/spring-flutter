@@ -1,10 +1,12 @@
 package com.sim.flutterspring.model;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -52,9 +54,9 @@ public class Item {
     @JsonProperty("statId")
     private String statId;
     @JsonProperty("chgerId")
-    private String chgerId;
+    private Long chgerId;
     @JsonProperty("chgerType")
-    private String chgerType;
+    private Long chgerType;
     @JsonProperty("addr")
     private String addr;
     @JsonProperty("location")
@@ -62,9 +64,9 @@ public class Item {
     @JsonProperty("useTime")
     private String useTime;
     @JsonProperty("lat")
-    private String lat;
+    private Double lat;
     @JsonProperty("lng")
-    private String lng;
+    private Double lng;
     @JsonProperty("busiId")
     private String busiId;
     @JsonProperty("bnm")
@@ -74,43 +76,47 @@ public class Item {
     @JsonProperty("busiCall")
     private String busiCall;
     @JsonProperty("stat")
-    private String stat;
+    private Long stat;
     @JsonProperty("statUpdDt")
-    private String statUpdDt;
+    private Date statUpdDt;
     @JsonProperty("lastTsdt")
-    private String lastTsdt;
+    private Date lastTsdt;
     @JsonProperty("lastTedt")
-    private String lastTedt;
+    private Date lastTedt;
     @JsonProperty("nowTsdt")
-    private String nowTsdt;
+    private Date nowTsdt;
     @JsonProperty("powerType")
     private String powerType;
     @JsonProperty("output")
-    private String output;
+    private Long output;
     @JsonProperty("method")
     private String method;
     @JsonProperty("zcode")
-    private String zcode;
+    private Long zcode;
     @JsonProperty("zscode")
-    private String zscode;
+    private Long zscode;
     @JsonProperty("kind")
     private String kind;
     @JsonProperty("kindDetail")
     private String kindDetail;
     @JsonProperty("parkingFree")
-    private String parkingFree;
+    @JsonDeserialize(using = BooleanYNDeserializer.class)
+    private boolean parkingFree;
     @JsonProperty("note")
     private String note;
     @JsonProperty("limitYn")
-    private String limitYn;
+    @JsonDeserialize(using = BooleanYNDeserializer.class)
+    private boolean limitYn;
     @JsonProperty("limitDetail")
     private String limitDetail;
     @JsonProperty("delYn")
-    private String delYn;
+    @JsonDeserialize(using = BooleanYNDeserializer.class)
+    private boolean delYn;
     @JsonProperty("delDetail")
     private String delDetail;
     @JsonProperty("trafficYn")
-    private String trafficYn;
+    @JsonDeserialize(using = BooleanYNDeserializer.class)
+    private boolean trafficYn;
     @JsonIgnore
     @Valid
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
@@ -136,22 +142,22 @@ public class Item {
     }
 
     @JsonProperty("chgerId")
-    public String getChgerId() {
+    public Long getChgerId() {
         return chgerId;
     }
 
     @JsonProperty("chgerId")
-    public void setChgerId(String chgerId) {
+    public void setChgerId(Long chgerId) {
         this.chgerId = chgerId;
     }
 
     @JsonProperty("chgerType")
-    public String getChgerType() {
+    public Long getChgerType() {
         return chgerType;
     }
 
     @JsonProperty("chgerType")
-    public void setChgerType(String chgerType) {
+    public void setChgerType(Long chgerType) {
         this.chgerType = chgerType;
     }
 
@@ -186,22 +192,22 @@ public class Item {
     }
 
     @JsonProperty("lat")
-    public String getLat() {
+    public Double getLat() {
         return lat;
     }
 
     @JsonProperty("lat")
-    public void setLat(String lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
     @JsonProperty("lng")
-    public String getLng() {
+    public Double getLng() {
         return lng;
     }
 
     @JsonProperty("lng")
-    public void setLng(String lng) {
+    public void setLng(Double lng) {
         this.lng = lng;
     }
 
@@ -246,52 +252,52 @@ public class Item {
     }
 
     @JsonProperty("stat")
-    public String getStat() {
+    public Long getStat() {
         return stat;
     }
 
     @JsonProperty("stat")
-    public void setStat(String stat) {
+    public void setStat(Long stat) {
         this.stat = stat;
     }
 
     @JsonProperty("statUpdDt")
-    public String getStatUpdDt() {
+    public Date getStatUpdDt() {
         return statUpdDt;
     }
 
     @JsonProperty("statUpdDt")
-    public void setStatUpdDt(String statUpdDt) {
+    public void setStatUpdDt(Date statUpdDt) {
         this.statUpdDt = statUpdDt;
     }
 
     @JsonProperty("lastTsdt")
-    public String getLastTsdt() {
+    public Date getLastTsdt() {
         return lastTsdt;
     }
 
     @JsonProperty("lastTsdt")
-    public void setLastTsdt(String lastTsdt) {
+    public void setLastTsdt(Date lastTsdt) {
         this.lastTsdt = lastTsdt;
     }
 
     @JsonProperty("lastTedt")
-    public String getLastTedt() {
+    public Date getLastTedt() {
         return lastTedt;
     }
 
     @JsonProperty("lastTedt")
-    public void setLastTedt(String lastTedt) {
+    public void setLastTedt(Date lastTedt) {
         this.lastTedt = lastTedt;
     }
 
     @JsonProperty("nowTsdt")
-    public String getNowTsdt() {
+    public Date getNowTsdt() {
         return nowTsdt;
     }
 
     @JsonProperty("nowTsdt")
-    public void setNowTsdt(String nowTsdt) {
+    public void setNowTsdt(Date nowTsdt) {
         this.nowTsdt = nowTsdt;
     }
 
@@ -306,12 +312,12 @@ public class Item {
     }
 
     @JsonProperty("output")
-    public String getOutput() {
+    public Long getOutput() {
         return output;
     }
 
     @JsonProperty("output")
-    public void setOutput(String output) {
+    public void setOutput(Long output) {
         this.output = output;
     }
 
@@ -326,22 +332,22 @@ public class Item {
     }
 
     @JsonProperty("zcode")
-    public String getZcode() {
+    public Long getZcode() {
         return zcode;
     }
 
     @JsonProperty("zcode")
-    public void setZcode(String zcode) {
+    public void setZcode(Long zcode) {
         this.zcode = zcode;
     }
 
     @JsonProperty("zscode")
-    public String getZscode() {
+    public Long getZscode() {
         return zscode;
     }
 
     @JsonProperty("zscode")
-    public void setZscode(String zscode) {
+    public void setZscode(Long zscode) {
         this.zscode = zscode;
     }
 
@@ -366,12 +372,12 @@ public class Item {
     }
 
     @JsonProperty("parkingFree")
-    public String getParkingFree() {
+    public boolean getParkingFree() {
         return parkingFree;
     }
 
     @JsonProperty("parkingFree")
-    public void setParkingFree(String parkingFree) {
+    public void setParkingFree(boolean parkingFree) {
         this.parkingFree = parkingFree;
     }
 
@@ -386,12 +392,12 @@ public class Item {
     }
 
     @JsonProperty("limitYn")
-    public String getLimitYn() {
+    public boolean getLimitYn() {
         return limitYn;
     }
 
     @JsonProperty("limitYn")
-    public void setLimitYn(String limitYn) {
+    public void setLimitYn(boolean limitYn) {
         this.limitYn = limitYn;
     }
 
@@ -406,12 +412,12 @@ public class Item {
     }
 
     @JsonProperty("delYn")
-    public String getDelYn() {
+    public boolean getDelYn() {
         return delYn;
     }
 
     @JsonProperty("delYn")
-    public void setDelYn(String delYn) {
+    public void setDelYn(boolean delYn) {
         this.delYn = delYn;
     }
 
@@ -426,12 +432,12 @@ public class Item {
     }
 
     @JsonProperty("trafficYn")
-    public String getTrafficYn() {
+    public boolean getTrafficYn() {
         return trafficYn;
     }
 
     @JsonProperty("trafficYn")
-    public void setTrafficYn(String trafficYn) {
+    public void setTrafficYn(boolean trafficYn) {
         this.trafficYn = trafficYn;
     }
 
