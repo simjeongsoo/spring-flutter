@@ -1,8 +1,10 @@
 package com.sim.flutterspring.controller;
 
 import com.sim.flutterspring.model.EvInfoDataDto;
+import com.sim.flutterspring.service.EvInfoDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,6 +31,13 @@ public class EvInfoDataController {
     String key;
 
     private final int allChStationNum = 36217;
+
+    private final EvInfoDataService evInfoDataService;
+
+    @Autowired
+    public EvInfoDataController(EvInfoDataService evInfoDataService) {
+        this.evInfoDataService = evInfoDataService;
+    }
     
     /**
      * Ev 충전소 정보 조회 api
@@ -56,10 +65,13 @@ public class EvInfoDataController {
                 .retrieve()  // get body
                 .bodyToMono(EvInfoDataDto.class); // JSON 데이터 역직렬화 하여 dto 매핑
 
-        // 데이터 확인
+        // response data 처리로직
         result.subscribe(evChargerInfoDto -> {
             // Use the EvChargerInfoDto
             logger.info("getStatNm : {}", evChargerInfoDto.items.item.get(0).getStatNm());
+
+            // dto -> service 전달
+            evInfoDataService.saveEvInfoData(evChargerInfoDto);
         });
 
         return result;
