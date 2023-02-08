@@ -1,0 +1,12 @@
+package com.sim.flutterspring.model;
+
+import lombok.*;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class AuthorityDto {
+    private String authorityName;
+}
