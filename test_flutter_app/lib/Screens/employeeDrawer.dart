@@ -11,6 +11,7 @@ import 'package:flutter/rendering.dart';
 import 'package:test_flutter_app/Screens/getEmployee.dart';
 import 'package:test_flutter_app/Screens/login.dart';
 import 'package:test_flutter_app/Screens/registerEmployee.dart';
+import 'package:test_flutter_app/Model/EvChargerInfo.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:test_flutter_app/Service/location_service.dart'; // google map
 
@@ -24,6 +25,15 @@ class employeeDrawer extends StatefulWidget{
 class employeeDrawerState extends State<employeeDrawer> {
 
   final minimumPadding = 5.0;
+
+  // 애플리케이션에서 지도를 이동하기 위한 컨트롤러
+  GoogleMapController _mapController;
+
+  // 시작 위치
+  final CameraPosition _initialPosition = CameraPosition(
+    target: LatLng(37.358453, 126.714331),
+    zoom: 14.4746,
+  );
 
   // Spring 에서 받아온 데이터
   List<EvChargerInfo> _evChargerInfoList;
@@ -42,21 +52,29 @@ class employeeDrawerState extends State<employeeDrawer> {
         _evChargerInfoList =
             (jsonDecode(utf8.decode(response.bodyBytes)) as List).map((e) =>
                 EvChargerInfo.fromJson(e)).toList();
-
       });
     } else {
       throw Exception('Failed to load data');
     }
   }
 
-  // 애플리케이션에서 지도를 이동하기 위한 컨트롤러
-  GoogleMapController _mapController;
 
-  // 시작 위치
-  final CameraPosition _initialPosition = CameraPosition(
-    target: LatLng(37.358453, 126.714331),
-    zoom: 14.4746,
-  );
+  // 검색한 장소로 지도를 이동하기 위한 컨트롤러
+  TextEditingController _searchController = TextEditingController();
+  // 검색한 장소로 위치 이동
+  Future<void> _goToSearchPlace(Map<String, dynamic> place) async {
+    final double lat = place['geometry']['location']['lat'];
+    final double lng = place['geometry']['location']['lng'];
+
+    // final GoogleMapController controller = await _controller.future;
+    final GoogleMapController controller = await _mapController;
+
+    _mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat,lng), zoom: 15),
+      ),
+    );
+  }
 
 
   /*// 지도 클릭 시 표시할 장소에 대한 마커 목록
@@ -74,9 +92,6 @@ class employeeDrawerState extends State<employeeDrawer> {
     });
   }
   // marker end*/
-
-  // 검색한 장소로 지도를 이동하기 위한 컨트롤러
-  TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -220,23 +235,8 @@ class employeeDrawerState extends State<employeeDrawer> {
     );
   }
 
-  // 검색한 장소로 위치 이동
-  Future<void> _goToSearchPlace(Map<String, dynamic> place) async {
-    final double lat = place['geometry']['location']['lat'];
-    final double lng = place['geometry']['location']['lng'];
-
-    // final GoogleMapController controller = await _controller.future;
-    final GoogleMapController controller = await _mapController;
-
-    _mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat,lng), zoom: 15),
-      ),
-    );
-  }
-
-  // get data
-  Future<void> _getLocationData() async {
+  // get data and setMarker
+  /*Future<void> _getLocationData() async {
     var response = await http.get('http://localhost:8081/flutter/get/one');
     var jsonData = json.decode(response.body);
     List locationData = jsonData['location_data'];
@@ -252,159 +252,6 @@ class employeeDrawerState extends State<employeeDrawer> {
         // _markers.add(marker);
       }
     });
-  }
-
-  Future<EvChargerInfo> fetchEvInfoData() async {
-    final response = await http.get('http://localhost:8081/flutter/get/one');
-
-    if (response.statusCode == 200) {
-      // Map<String, dynamic> map = json.decode(response.body);
-      Map<String, dynamic> map = jsonDecode(utf8.decode(response.bodyBytes)); // 한글깨짐 오류 처리
-
-
-      var evChargerInfo1 = EvChargerInfo.fromJson(map);
-      print(EvChargerInfo.fromJson(map).addr);
-      print(evChargerInfo1.lng);
-      print(evChargerInfo1.lat);
-
-      return EvChargerInfo.fromJson(map);
-    } else {
-
-      throw Exception('Failed to load data');
-    }
-  }
-}
-
-class EvChargerInfo {
-   String statNm;          // 충전소명
-   String statId;            // 충전소 ID
-   var chgerId;           // 충전기 ID
-   var chgerType;         // 충전기 타입
-   String addr;            // 주소
-   String location;        // 상세위치
-   String useTime;         // 이용가능시간
-   var lat;               // 위도
-   var lng;               // 경도
-   String busiId;          // 기관 아이디
-   String bnm;             // 기관명
-   String busiNm;          // 운영기관명
-   String busiCall;        // 운영기관 연락처
-   var chstat;            // 충전기 상태
-   String statUpdDt;         // 상태 갱신일시
-   String lastTsdt;          // 마지막 충전시작 일시
-   String lastTedt;          // 마지막 충전종료 일시
-   String nowTsdt;           // 충전중 시작일시
-   String powerType;
-   var output;            // 충전용량
-   String method;         // 충전방식
-   var zcode;             // 지역코드
-   var zscode;            // 지역구분 상세코드
-   String kind;            // 충전소 구분 코드
-   String kindDetail;      // 충전소 구분 상세 코드
-   bool parkingFree;    // 주차료 무료
-   String note;            // 충전소 안내
-   bool limitYn;        // 이용자제한
-   String limitDetail;     // 이용 제한사유
-   bool delYn;          // 삭제 여부
-   String delDetail;       // 삭제 사유
-   bool trafficYn;  // 편의제공 여부
-
-   EvChargerInfo(
-      this.statNm,
-      this.statId,
-      this.chgerId,
-      this.chgerType,
-      this.addr,
-      this.location,
-      this.useTime,
-      this.lat,
-      this.lng,
-      this.busiId,
-      this.bnm,
-      this.busiNm,
-      this.busiCall,
-      this.chstat,
-      this.statUpdDt,
-      this.lastTsdt,
-      this.lastTedt,
-      this.nowTsdt,
-      this.powerType,
-      this.output,
-      this.method,
-      this.zcode,
-      this.zscode,
-      this.kind,
-      this.kindDetail,
-      this.parkingFree,
-      this.note,
-      this.limitYn,
-      this.limitDetail,
-      this.delYn,
-      this.delDetail,
-      this.trafficYn);
-
-   String get _statNm => statNm;
-   String get _statId => statId;
-
-   factory EvChargerInfo.fromJson(Map<String, dynamic> json) {
-     return EvChargerInfo(
-       json['statNm'],
-       json['statId'],
-       json['chgerId'],
-       json['chgerType'],
-       json['addr'],
-       json['location'],
-       json['useTime'],
-       json['lat'],
-       json['lng'],
-       json['busiId'],
-       json['bnm'],
-       json['busiNm'],
-       json['busiCall'],
-       json['chstat'],
-       json['statUpDt'],
-       json['lastTsdt'],
-       json['lastTedt'],
-       json['nowTsdt'],
-       json['powerType'],
-       json['output'],
-       json['method'],
-       json['zcode'],
-       json['zscode'],
-       json['kind'],
-       json['kindDetail'],
-       json['parkingFree'],
-       json['note'],
-       json['limitYn'],
-       json['limitDetail'],
-       json['delYn'],
-       json['delDetail'],
-       json['trafficYn'],
-     );
-   }
-
-   Future<List<EvChargerInfo>> fetchEvInfoData() async {
-     final response = await http.get('http://localhost:8081/flutter/get/evInfo');
-
-     if (response.statusCode == 200) {
-       // List<dynamic> data = json.decode(response.body);
-
-       List<dynamic> data  = jsonDecode(utf8.decode(response.bodyBytes)); // 한글깨짐 오류 처리
-
-       List<EvChargerInfo> evChargerInfos = []; // 리스트 배열 생성
-
-       for (var item in data) {
-         evChargerInfos.add(EvChargerInfo.fromJson(item));
-       }
-       return evChargerInfos;
-
-     } else {
-       throw Exception('Failed to load data');
-     }
-   }
-
-
-
-
+  }*/
 }
 
