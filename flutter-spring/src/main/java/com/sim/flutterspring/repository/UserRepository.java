@@ -1,10 +1,16 @@
 package com.sim.flutterspring.repository;
 
 import com.sim.flutterspring.entity.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByEmailAndPassword(String email,String password);
+
+    @EntityGraph(attributePaths = "authorities")
+    Optional<User> findOneWithAuthoritiesByUsername(String username);
 
 }
