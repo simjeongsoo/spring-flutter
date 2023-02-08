@@ -2,6 +2,7 @@ package com.sim.flutterspring.service;
 
 import com.sim.flutterspring.entity.Authority;
 import com.sim.flutterspring.entity.User;
+import com.sim.flutterspring.exception.NotFoundMemberException;
 import com.sim.flutterspring.model.UserDto;
 import com.sim.flutterspring.repository.UserRepository;
 import com.sim.flutterspring.util.SecurityUtil;
@@ -23,7 +24,7 @@ public class UserService {
     }
 
     @Transactional
-    public User signup(UserDto userDto) {
+    public UserDto signup(UserDto userDto) {
         //--회원가입 로직을 수행하는 메서드--//
 
         if (userRepository.findOneWithAuthoritiesByUsername(userDto.getUsername()).orElse(null) != null) {
@@ -47,21 +48,34 @@ public class UserService {
                 .build();
 
         // DB 에 유저 정보 저장
-        return userRepository.save(user);
+//        return userRepository.save(user);
+        return UserDto.from(userRepository.save(user)); // entity to dto
     }
 
     //--유저, 권한정보를 가져오는 두가지 메서드
     // 이 두가지 메서드의 허용권한을 다르게 하여 권한 검증에 대한 부분을 테스트--//
     @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthorities(String username) {
-        // username 을 기준으로 정보를 가져옴
-        return userRepository.findOneWithAuthoritiesByUsername(username);
+    public UserDto getUserWithAuthorities(String username) {
+        return UserDto.from(userRepository.findOneWithAuthoritiesByUsername(username).orElse(null));
     }
+//    @Transactional(readOnly = true)
+//    public Optional<User> getUserWithAuthorities(String username) {
+//        // username 을 기준으로 정보를 가져옴
+//        return userRepository.findOneWithAuthoritiesByUsername(username);
+//    }
 
     @Transactional(readOnly = true)
-    public Optional<User> getMyUserWithAuthorities() {
-        // SecurityContext에 저장된 username의 정보만 가져옴
-        return SecurityUtil.getCurrentUsername()
-                .flatMap(userRepository::findOneWithAuthoritiesByUsername);
+    public UserDto getMyUserWithAuthorities() {
+        return UserDto.from(
+                SecurityUtil.getCurrentUsername()
+                        .flatMap(userRepository::findOneWithAuthoritiesByUsername)
+                        .orElseThrow(() -> new NotFoundMemberException("Member not found"))
+        );
     }
+//    @Transactional(readOnly = true)
+//    public Optional<User> getMyUserWithAuthorities() {
+//        // SecurityContext에 저장된 username의 정보만 가져옴
+//        return SecurityUtil.getCurrentUsername()
+//                .flatMap(userRepository::findOneWithAuthoritiesByUsername);
+//    }
 }
