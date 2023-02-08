@@ -14,6 +14,7 @@ import 'package:test_flutter_app/Screens/registerEmployee.dart';
 import 'package:test_flutter_app/Model/EvChargerInfo.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:test_flutter_app/Service/location_service.dart'; // google map
+import 'package:custom_info_window/custom_info_window.dart';
 
 class employeeDrawer extends StatefulWidget{
   @override
@@ -75,6 +76,8 @@ class employeeDrawerState extends State<employeeDrawer> {
       ),
     );
   }
+  // custom_info_window
+  // CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
 
 
   /*// 지도 클릭 시 표시할 장소에 대한 마커 목록
@@ -146,9 +149,14 @@ class employeeDrawerState extends State<employeeDrawer> {
                     position: LatLng(e.lat, e.lng),
                     infoWindow: InfoWindow(
                       title: e.statNm,
-                      snippet: e.addr,
+                      snippet:
+                      e.addr + '\n' +
+                      '운영기관 : '+e.bnm + '\n' +
+                      '이용시간 : ' + e.useTime + '\n' +
+                      '주차요금 : ' + (e.parkingFree == true ? '무료' : '유료') + '\n'
+                      ,
                     )
-                  )).toSet()
+                  )).toSet(),
                   // markers: markers.toSet(),
                   // onTap: (cordinate) {
                   // 클릭시 마커 추가
@@ -181,6 +189,8 @@ class employeeDrawerState extends State<employeeDrawer> {
             ),
             FloatingActionButton(
               heroTag: 'admin',
+              // 관리자 계정으로 접속시에 보이는 버튼으로 구현할 예정
+              // 버튼 클릭시 관리자 페이지로 이동
               onPressed: () {
                 // _mapController.animateCamera(CameraUpdate.zoomOut());
                 // fetchEvInfoData();
