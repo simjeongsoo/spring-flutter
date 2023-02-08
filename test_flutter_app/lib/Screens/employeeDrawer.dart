@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:test_flutter_app/Model/EvChargerInfo.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:test_flutter_app/Service/location_service.dart'; // google map
 import 'package:custom_info_window/custom_info_window.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class employeeDrawer extends StatefulWidget{
   @override
@@ -26,13 +28,50 @@ class employeeDrawer extends StatefulWidget{
 class employeeDrawerState extends State<employeeDrawer> {
 
   final minimumPadding = 5.0;
+  String markerLatLng; // 마커 클릭시 위도경도
+  String currentLatLng; // 현재 위치 위도경도
+  void setCurrentLatLng()async{
+    currentLatLng = await LocationService().getCurrentLatLng();
+  }
+  String direction; // 마커 클릭시 위치
+  String currentLocation; // 현재 위치
+  void setCurrentLocation() async {
+    // Future<String> to String
+    currentLocation = await LocationService().getCurrentPlaceId();
+  }
+
+  // 경로그리기
+  Set<Polyline> _polylines = Set<Polyline>();
+  int _polylineIdCounter = 1;
+  void _setPolyline(List<PointLatLng> points){
+    final String polylineIdVal = 'polyline_$_polylineIdCounter';
+    _polylineIdCounter++;
+
+    if(points == null) {
+      print("No data available");
+      points = [];
+    }
+
+    _polylines.add(
+      Polyline(
+        polylineId: PolylineId(polylineIdVal),
+        width: 2,
+        color: Colors.blue,
+        points: points
+          .map(
+              (point) => LatLng(point.latitude, point.longitude),
+          )
+          .toList()
+      ),
+    );
+  }
 
   // 애플리케이션에서 지도를 이동하기 위한 컨트롤러
   GoogleMapController _mapController;
 
   // 시작 위치
   final CameraPosition _initialPosition = CameraPosition(
-    target: LatLng(37.358453, 126.714331),
+    target: LatLng(37.496923, 126.985021),
     zoom: 14.4746,
   );
 
@@ -47,18 +86,28 @@ class employeeDrawerState extends State<employeeDrawer> {
 
   // get location from Spring
   Future<void> fetchEvChargerInfoData() async {
-    final response = await http.get('http://localhost:8081/flutter/get/evInfo');
+    // String url = "http://localhost:8081/flutter/get/evInfo";
+    String url = "http://10.0.2.2:8081/flutter/get/evInfo";
+    var uri = Uri.parse(url);
+    final response = await http.get(uri);
     if (response.statusCode == 200) {
       setState(() {
+        if((jsonDecode(utf8.decode(response.bodyBytes)) as List) == null) {
+          print("No data available");
+        }
+
         _evChargerInfoList =
             (jsonDecode(utf8.decode(response.bodyBytes)) as List).map((e) =>
                 EvChargerInfo.fromJson(e)).toList();
+        if(_evChargerInfoList == null){
+          print("No data available");
+          _evChargerInfoList=[];
+        }
       });
     } else {
       throw Exception('Failed to load data');
     }
   }
-
 
   // 검색한 장소로 지도를 이동하기 위한 컨트롤러
   TextEditingController _searchController = TextEditingController();
@@ -134,6 +183,7 @@ class employeeDrawerState extends State<employeeDrawer> {
                   myLocationButtonEnabled: true,
                   myLocationEnabled: true,
                   mapType: MapType.normal,
+                  polylines: _polylines,
                   initialCameraPosition: _initialPosition,
                   // 초기 카메라 위치
                   onMapCreated: (controller) {
@@ -144,7 +194,7 @@ class employeeDrawerState extends State<employeeDrawer> {
                   // onMapCreated: (GoogleMapController controller){
                   //   _controller.complete(controller);
                   // },
-                  markers: _evChargerInfoList.map((e) => Marker(
+                  markers: _evChargerInfoList != null ? _evChargerInfoList.map((e) => Marker(
                     markerId: MarkerId(e.statId.toString()),
                     position: LatLng(e.lat, e.lng),
                     infoWindow: InfoWindow(
@@ -153,10 +203,17 @@ class employeeDrawerState extends State<employeeDrawer> {
                       e.addr + '\n' +
                       '운영기관 : '+e.bnm + '\n' +
                       '이용시간 : ' + e.useTime + '\n' +
-                      '주차요금 : ' + (e.parkingFree == true ? '무료' : '유료') + '\n'
-                      ,
-                    )
-                  )).toSet(),
+                      '주차요금 : ' + (e.parkingFree == true ? '무료' : '유료') + '\n',
+                    ),
+                    onTap: (){
+                      setState(() {
+                        // direction = LocationService().getPlaceIdByLatLng(e.lat,e.lng) as String;
+                        LocationService().getPlaceIdByLatLng(e.lat, e.lng).then((value) => direction = value);
+                        markerLatLng = "${e.lat},${e.lng}";
+
+                      });
+                    }
+                  )).toSet() : Set(),
                   // markers: markers.toSet(),
                   // onTap: (cordinate) {
                   // 클릭시 마커 추가
@@ -166,7 +223,7 @@ class employeeDrawerState extends State<employeeDrawer> {
                 ),
             ),
           ],
-        )
+        ),
       ),
       floatingActionButton: Container(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 30),
@@ -191,10 +248,23 @@ class employeeDrawerState extends State<employeeDrawer> {
               heroTag: 'admin',
               // 관리자 계정으로 접속시에 보이는 버튼으로 구현할 예정
               // 버튼 클릭시 관리자 페이지로 이동
-              onPressed: () {
-                // _mapController.animateCamera(CameraUpdate.zoomOut());
-                // fetchEvInfoData();
-              },
+              // onPressed: () async {
+              //   // _mapController.animateCamera(CameraUpdate.zoomOut());
+              //   // fetchEvInfoData();
+              //   // setCurrentLocation();
+              //
+              //   // var directions = await LocationService().getDirections(currentLocation, direction);
+              //   // LocationService().getDirections(currentLocation, direction);
+              //   // print("현위치아이디 : "+currentLocation + " 목적지아이디 : " + direction);
+              //
+              //   // _goToSearchPlace(directions['start_location']['lat'], directions['start_location']['lng']);
+              //
+              //   // _setPolyline(directions['polyline_decoded']);
+              //
+              // },
+              onPressed:() async {
+                _launchUrl();
+              } ,
               child: Icon(Icons.adb_outlined),
             ),
           ],
@@ -244,7 +314,19 @@ class employeeDrawerState extends State<employeeDrawer> {
       ),
     );
   }
+  // final Uri _url = Uri.parse('https://www.google.com');
+  // https://www.google.com/maps/dir/lat,lng/lat,lng/data=!3m1!4b1!4m2!4m1!3e3
 
+
+  // 현재위치와 마커의 위치 기반으로 경로찾기
+  Future<void> _launchUrl() async {
+    setCurrentLatLng();
+    String urlstr = "https://www.google.com/maps/dir/${currentLatLng}/${markerLatLng}/data=!3m1!4b1!4m2!4m1!3e3";
+    final Uri url = Uri.parse(urlstr);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
   // get data and setMarker
   /*Future<void> _getLocationData() async {
     var response = await http.get('http://localhost:8081/flutter/get/one');
