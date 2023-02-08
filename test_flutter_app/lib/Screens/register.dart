@@ -15,10 +15,13 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   User user = User("", "");
-  var url = "http://localhost:8081/register";
+  // static String url = "http://localhost:8081/register";
+  static String url = "http://10.0.2.2:8081/register";
+
+  var uri = Uri.parse(url);
 
   Future save() async {
-    var res = await http.post(url,
+    var res = await http.post(uri,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'email': user.email, 'password': user.password}));
     print(res.body);
@@ -62,7 +65,8 @@ class _RegisterState extends State<Register> {
                               fontWeight: FontWeight.bold,
                               fontSize: 50,
                               color: Colors.white,
-                            )),
+                            )
+                        ),
                         SizedBox(
                           height: 30,
                         ),

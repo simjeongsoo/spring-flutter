@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +19,9 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   User user = User("", "");
-  var url = "http://localhost:8081/login";
+  // static String urlstr = "http://localhost:8081/login";
+  static String urlstr = "http://10.0.2.2:8081/login";
+  var url = Uri.parse(urlstr);
 
   Future save() async {
     var res = await http.post(url,
@@ -69,7 +72,8 @@ class _LoginState extends State<Login> {
                               fontWeight: FontWeight.bold,
                               fontSize: 50,
                               color: Colors.white,
-                            )),
+                            )
+                        ),
                         SizedBox(
                           height: 30,
                         ),

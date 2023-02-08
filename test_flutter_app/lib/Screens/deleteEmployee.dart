@@ -13,10 +13,10 @@ class deleteEmployee extends StatefulWidget{
 }
 
 Future<EmployeeModel> deleteEmployees(String firstName, String lastName) async {
-  // var Url = "http://localhost:8081/deleteemployee";
-  var Url = "http://10.0.2.2:8081/updateemployee"; // android Emulator
+  var Url = "http://localhost:8081/deleteemployee";
+  // var Url = "http://10.0.2.2:8081/updateemployee"; // android Emulator
   var response = await http.delete(
-    Url,
+    Url as Uri,
     headers: <String, String>{
       "Content-Type": "application/json;charset=UTF-8,"
     },

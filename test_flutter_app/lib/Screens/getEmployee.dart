@@ -22,8 +22,8 @@ class getAllEmployeeState extends State<getEmployee>{
   var employess = List<EmployeeModel>.generate(200, (index) => null);
 
   Future<List<EmployeeModel>> getEmployees() async {
-    // var data = await http.get('http://localhost:8081/getallemployees');
-    var data = await http.get('http://10.0.2.2:8081/getallemployees'); // android Emulator
+    var data = await http.get('http://localhost:8081/getallemployees' as Uri);
+    // var data = await http.get('http://10.0.2.2:8081/getallemployees'); // android Emulator
     var jsonData = json.decode(data.body);
 
     List<EmployeeModel> employee = [];
@@ -36,8 +36,7 @@ class getAllEmployeeState extends State<getEmployee>{
     }
     return employee;
   }
-
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,8 +89,8 @@ class DetailPage extends StatelessWidget {
   DetailPage(this.employee);
 
   deleteEmployee1(EmployeeModel employee) async {
-    // final url = Uri.parse('http://localhost:8081/deleteemployee');
-    final url = Uri.parse('http://10.0.2.2:8081/deleteemployee');
+    final url = Uri.parse('http://localhost:8081/deleteemployee');
+    // final url = Uri.parse('http://10.0.2.2:8081/deleteemployee'); // android
 
     final request = http.Request("DELETE", url);
     request.headers.addAll(<String, String>{"Content-type": "application/json"});

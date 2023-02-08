@@ -15,9 +15,9 @@ class registerEmployee extends StatefulWidget {
 Future<EmployeeModel> registerEmployees(
     String firstName, String lastName, BuildContext context) async {
 
-  // var Url = "http://localhost:8081/addemployee";
-  var Url = "http://10.0.2.2:8081/addemployee"; // Android Emulator
-  var response = await http.post(Url,
+  var Url = "http://localhost:8081/addemployee";
+  // var Url = "http://10.0.2.2:8081/addemployee"; // Android Emulator
+  var response = await http.post(Url as Uri,
       headers: <String, String>{"Content-Type": "application/json"},
       body: jsonEncode(<String, String>{
         "firstName": firstName,

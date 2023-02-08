@@ -18,9 +18,9 @@ class updateEmployee extends StatefulWidget{
 }
 
 Future<EmployeeModel> updateEmployees(EmployeeModel employee, BuildContext context) async {
-  // var Url = "http://localhost:8081/updateemployee";
-  var Url = "http://10.0.2.2:8081/updateemployee"; // android Emulator
-  var response = await http.put(Url,
+  var Url = "http://localhost:8081/updateemployee";
+  // var Url = "http://10.0.2.2:8081/updateemployee"; // android Emulator
+  var response = await http.put(Url as Uri,
       headers: <String, String>{"Content-Type": "application/json"},
       body: jsonEncode(employee));
   String responseString = response.body;
