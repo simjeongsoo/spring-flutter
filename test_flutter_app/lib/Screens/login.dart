@@ -6,8 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:test_flutter_app/Screens/dashboard.dart';
 import 'package:test_flutter_app/Screens/register.dart';
-import 'package:test_flutter_app/Model/user.dart';
 import 'package:test_flutter_app/Screens/employeeDrawer.dart';
+import 'package:test_flutter_app/Service/login_service.dart';
 
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
@@ -17,25 +17,10 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final _formKey = GlobalKey<FormState>();
-  User user = User("", "");
-  // static String urlstr = "http://localhost:8081/login";
-  static String urlstr = "http://10.0.2.2:8081/login";
-  var url = Uri.parse(urlstr);
 
-  Future save() async {
-    var res = await http.post(url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': user.email, 'password': user.password}));
-    print(res.body);
-    if (res.body != null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => employeeDrawer(),
-          ));
-    }
-  }
+  final _emailController = TextEditingController(); // 이메일 입력폼 컨트롤러
+  final _passwordController = TextEditingController(); // 패스워드 입력 폼 컨트롤러
+  final _formKey = GlobalKey<FormState>(); // key
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +34,7 @@ class _LoginState extends State<Login> {
                   height: 750,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                    color: Color.fromRGBO(233, 65, 82, 1),
+                    color: Color.fromRGBO(60, 65, 64, 1),
                     boxShadow: [
                       BoxShadow(
                           blurRadius: 10,
@@ -81,7 +66,7 @@ class _LoginState extends State<Login> {
                           alignment: Alignment.topLeft,
                           child: Text(
                             "Email",
-                            style: GoogleFonts.roboto(
+                            style: GoogleFonts.sourceCodePro(
                               // fontWeight: FontWeight.bold,
                               fontSize: 30,
                               color: Color.fromRGBO(255, 255, 255, 0.8),
@@ -89,9 +74,11 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         TextFormField(
-                          controller: TextEditingController(text: user.email),
+                          // controller: TextEditingController(text: user.email),
+                          controller: _emailController,
                           onChanged: (val) {
-                            user.email = val;
+                            // user.email = val;
+                            print(val);
                           },
                           validator: (value) {
                             if (value.isEmpty) {
@@ -117,7 +104,7 @@ class _LoginState extends State<Login> {
                           alignment: Alignment.topLeft,
                           child: Text(
                             "Password",
-                            style: GoogleFonts.roboto(
+                            style: GoogleFonts.sourceCodePro(
                               // fontWeight: FontWeight.bold,
                               fontSize: 30,
                               color: Color.fromRGBO(255, 255, 255, 0.8),
@@ -126,10 +113,11 @@ class _LoginState extends State<Login> {
                         ),
                         TextFormField(
                           obscureText: true,
-                          controller:
-                          TextEditingController(text: user.password),
+                          // controller: TextEditingController(text: user.password),
+                          controller: _passwordController,
                           onChanged: (val) {
-                            user.password = val;
+                            // user.password = val;
+                            print(val);
                           },
                           validator: (value) {
                             if (value.isEmpty) {
@@ -160,8 +148,8 @@ class _LoginState extends State<Login> {
                                       builder: (context) => Register()));
                             },
                             child: Text(
-                              "Dont have Account ?",
-                              style: GoogleFonts.roboto(
+                              "아이디 만들기",
+                              style: GoogleFonts.anton(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
                                   color: Colors.white),
@@ -180,14 +168,21 @@ class _LoginState extends State<Login> {
                   width: 60,
                   child: ElevatedButton(
                     style: TextButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(233, 65, 82, 1),
+                      backgroundColor: const Color.fromRGBO(60, 65, 64, 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50)
                       )
                     ),
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
-                          save();
+                          // save();
+                          final selectedWidget = context.findAncestorWidgetOfExactType<Login>();
+                          loginUser(context,_emailController.text, _passwordController.text);
+                          if(selectedWidget != null){
+                            print("dasdf");
+                          }else{
+                            print('null???');
+                          }
                         }
                       },
                       child: Icon(
