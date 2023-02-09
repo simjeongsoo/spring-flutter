@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -14,6 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+@Component
 public class JwtFilter extends GenericFilterBean {
     //--JWT를 위한 커스텀 필터를 만들기 위한 JwtFilter 클래스--//
     //--GenericFilterBean을 extends 해서 doFilter Override, 실제 필터링 로직은 doFilter 내부에 작성--//
@@ -48,7 +50,7 @@ public class JwtFilter extends GenericFilterBean {
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private String resolveToken(HttpServletRequest request) {
+    public String resolveToken(HttpServletRequest request) {
         //--Request Header에서 토큰 정보를 꺼내오기 위한 resolveToken 메소드 추가--//
         logger.debug("resolveToken 들어옴");
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
