@@ -83,9 +83,10 @@ public class SecurityConfig {
                 // 접근 권한 설정
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/hello").permitAll()
-                .antMatchers("/api/authenticate").permitAll() // 토큰이 없는 상태의 request
-                .antMatchers("/api/signup").permitAll()         // 로그인,회원가입 permitAll()
+                .antMatchers("/api/hello").permitAll() // 토큰이 없는 상태의 request
+                .antMatchers("/api/authenticate").permitAll()
+                .antMatchers("/api/signup").permitAll() // 로그인,회원가입 permitAll()
+                .antMatchers("/api/userauthenticationcheck").permitAll()
                 .anyRequest().authenticated()
 
                 // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig 클래스 적용
