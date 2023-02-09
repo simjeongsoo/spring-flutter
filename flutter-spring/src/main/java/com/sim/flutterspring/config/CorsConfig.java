@@ -18,6 +18,7 @@ public class CorsConfig {
         config.addAllowedMethod("*");
 
         source.registerCorsConfiguration("/api/**", config);
+        source.registerCorsConfiguration("/flutter/**", config);
         return new CorsFilter(source);
     }
 }
