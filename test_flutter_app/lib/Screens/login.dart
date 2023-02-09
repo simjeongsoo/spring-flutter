@@ -67,22 +67,19 @@ class _LoginState extends State<Login> {
                           child: Text(
                             "Email",
                             style: GoogleFonts.sourceCodePro(
-                              // fontWeight: FontWeight.bold,
                               fontSize: 30,
                               color: Color.fromRGBO(255, 255, 255, 0.8),
                             ),
                           ),
                         ),
                         TextFormField(
-                          // controller: TextEditingController(text: user.email),
                           controller: _emailController,
                           onChanged: (val) {
-                            // user.email = val;
                             print(val);
                           },
                           validator: (value) {
                             if (value.isEmpty) {
-                              return 'Password is Empty';
+                              return '이메일을 입력하세요';
                             }
                             return null;
                           },
@@ -121,7 +118,7 @@ class _LoginState extends State<Login> {
                           },
                           validator: (value) {
                             if (value.isEmpty) {
-                              return 'Email is Empty';
+                              return '비밀번호를 입력하세요';
                             }
                             return null;
                           },
@@ -175,7 +172,6 @@ class _LoginState extends State<Login> {
                     ),
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
-                          // save();
                           final selectedWidget = context.findAncestorWidgetOfExactType<Login>();
                           loginUser(context,_emailController.text, _passwordController.text);
                           if(selectedWidget != null){
