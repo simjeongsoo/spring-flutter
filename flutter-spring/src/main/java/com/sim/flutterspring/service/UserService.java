@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -56,6 +55,7 @@ public class UserService {
     // 이 두가지 메서드의 허용권한을 다르게 하여 권한 검증에 대한 부분을 테스트--//
     @Transactional(readOnly = true)
     public UserDto getUserWithAuthorities(String username) {
+        // username 을 기준으로 정보를 가져옴
         return UserDto.from(userRepository.findOneWithAuthoritiesByUsername(username).orElse(null));
     }
 //    @Transactional(readOnly = true)
@@ -66,6 +66,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDto getMyUserWithAuthorities() {
+        // SecurityContext에 저장된 username의 정보만 가져옴
         return UserDto.from(
                 SecurityUtil.getCurrentUsername()
                         .flatMap(userRepository::findOneWithAuthoritiesByUsername)
