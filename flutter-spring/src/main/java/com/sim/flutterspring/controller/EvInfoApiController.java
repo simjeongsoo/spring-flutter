@@ -1,6 +1,6 @@
 package com.sim.flutterspring.controller;
 
-import com.sim.flutterspring.entity.EvChargerInfo;
+import com.sim.flutterspring.model.EvChargerInfoResponseDto;
 import com.sim.flutterspring.repository.EvChargerInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/flutter")
@@ -23,13 +24,15 @@ public class EvInfoApiController {
     /**
      * 전기차 충전소 info api
      * */
+    //    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/get/evInfo")
-//    @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<EvChargerInfo> getEvInfoData() {
-    //        EvChargerInfo evChargerInfo = evChargerInfoRepository.findById(1L).orElse(null);
-        return evChargerInfoRepository.findAll();
-    }
+    public List<EvChargerInfoResponseDto> getEvInfoData() {
 
+        return evChargerInfoRepository.findAll().stream()
+                .map(EvChargerInfoResponseDto::from)
+                .collect(Collectors.toList());
+
+    }
 
     /*@GetMapping("/get/one")
     public Mono<EvChargerInfo> getOneWithWebClient() {
@@ -44,7 +47,5 @@ public class EvInfoApiController {
 
         return evChargerInfoMono;
     }*/
-
-
 
 }
