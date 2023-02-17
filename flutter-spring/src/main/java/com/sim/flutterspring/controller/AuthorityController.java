@@ -8,6 +8,7 @@ import com.sim.flutterspring.model.LoginDto;
 import com.sim.flutterspring.repository.AuthorityRepository;
 import com.sim.flutterspring.repository.UserRepository;
 import com.sim.flutterspring.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -18,28 +19,14 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api")
 public class AuthorityController {
-
-    private final AuthorityRepository authorityRepository;
-    private final UserRepository userRepository;
-    private final CustomUserDetailsService customUserDetailsService;
     private final TokenProvider tokenProvider;
     private final JwtFilter jwtFilter;
 
-    public AuthorityController(AuthorityRepository authorityRepository, UserRepository userRepository, CustomUserDetailsService customUserDetailsService, TokenProvider tokenProvider, JwtFilter jwtFilter) {
-        this.authorityRepository = authorityRepository;
-        this.userRepository = userRepository;
-        this.customUserDetailsService = customUserDetailsService;
+    @Autowired
+    public AuthorityController(TokenProvider tokenProvider, JwtFilter jwtFilter) {
         this.tokenProvider = tokenProvider;
         this.jwtFilter = jwtFilter;
     }
-
-//    @GetMapping("/authority")
-////    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-//    public AuthorityDto getMyUserInfo(String username) {
-//        User user = userRepository.findOneWithAuthoritiesByUsername(username).orElse(null);
-//
-//        return ResponseEntity.ok(authorityRepository.findById(id).get());
-//    }
 
     @PostMapping("/userauthenticationcheck")
     public ResponseEntity<Authentication> signin(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {       // 사용자 인증 정보
@@ -55,4 +42,12 @@ public class AuthorityController {
 
         return ResponseEntity.ok(authenticationClient);
     }
+
+    //    @GetMapping("/authority")
+////    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+//    public AuthorityDto getMyUserInfo(String username) {
+//        User user = userRepository.findOneWithAuthoritiesByUsername(username).orElse(null);
+//
+//        return ResponseEntity.ok(authorityRepository.findById(id).get());
+//    }
 }

@@ -16,8 +16,12 @@ public class EmployeeController {
 
     Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
+    private final EmployeeService employeeService;
+
     @Autowired
-    EmployeeService employeeService;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
     /**
      * 전체 조회 api

@@ -9,7 +9,7 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
     //--TokenProvider, JwtFilter 를 SecurityConfig에 적용할 때 사용할 클래스--//
 
     // SecurityConfigurerAdapter 를 상속받고
-    private TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
     // tokenProvider 주입
     public JwtSecurityConfig(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;

@@ -6,6 +6,7 @@ import com.sim.flutterspring.exception.NotFoundMemberException;
 import com.sim.flutterspring.model.UserDto;
 import com.sim.flutterspring.repository.UserRepository;
 import com.sim.flutterspring.util.SecurityUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +17,10 @@ import java.util.Collections;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    // UserRepository, PasswordEncoder 주입
+
+    @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        // UserRepository, PasswordEncoder 주입
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }

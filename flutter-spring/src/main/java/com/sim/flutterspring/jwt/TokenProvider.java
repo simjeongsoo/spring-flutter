@@ -33,7 +33,7 @@ public class TokenProvider implements InitializingBean {
 
     private Key key;
 
-    public TokenProvider(       // 의존성 주입
+    public TokenProvider(
                                 @Value("${jwt.secret}") String secret,  // application.yml 설정값 호출
                                 @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
         this.secret = secret;

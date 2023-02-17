@@ -2,9 +2,9 @@ package com.sim.flutterspring.controller;
 
 import com.sim.flutterspring.model.EvChargerInfoResponseDto;
 import com.sim.flutterspring.repository.EvChargerInfoRepository;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,12 +14,16 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/flutter")
-@RequiredArgsConstructor
 public class EvInfoApiController {
     //--flutter request를 받을 api--//
     Logger logger = LoggerFactory.getLogger(EvInfoApiController.class);
 
     private final EvChargerInfoRepository evChargerInfoRepository;
+
+    @Autowired
+    public EvInfoApiController(EvChargerInfoRepository evChargerInfoRepository) {
+        this.evChargerInfoRepository = evChargerInfoRepository;
+    }
 
     /**
      * 전기차 충전소 info api
