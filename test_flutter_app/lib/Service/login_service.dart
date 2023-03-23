@@ -11,6 +11,7 @@ Future<void> loginUser(BuildContext context, String username, String password) a
     // 사용자 자격증명(아이디,비밀번호) 로 토큰 발급
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8081/api/authenticate'),
+      // Uri.parse('http://localhost:8081/api/authenticate'),
       // headers: headers,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
