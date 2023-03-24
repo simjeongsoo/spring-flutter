@@ -54,6 +54,7 @@ class TokenService {
       // JWT 토큰으로 서버에 요청하기
       http.Response response = await http.get(
         Uri.parse('http://10.0.2.2:8081/api/userauthenticationcheck'),
+        // Uri.parse('http://localhost:8081/api/userauthenticationcheck'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken',
@@ -79,6 +80,7 @@ class TokenService {
     // 사용자의 자격 증명을 사용하여 서버에 요청을 보냅니다.
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8081/api/userauthenticationcheck'),
+      // Uri.parse('http://localhost:8081/api/userauthenticationcheck'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': '${getToken()}'
