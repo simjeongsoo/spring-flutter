@@ -9,6 +9,7 @@ Future<void> registerUser(BuildContext context, String username, String password
   try {
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8081/api/signup'),
+      // Uri.parse('http://localhost:8081/api/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -22,6 +23,7 @@ Future<void> registerUser(BuildContext context, String username, String password
     if (response.statusCode == 200) {
       final responseJson = jsonDecode(utf8.decode(response.bodyBytes));
       final token = responseJson['token'];
+      print('회원가입 할때 발급받은 토큰 : ${token.toString()}');
 
       // JWT 토큰 내부 저장소 저장
       TokenService().storeToken(token);
